@@ -44,5 +44,7 @@ export const calc_orbit = (n_points, a, b, n_iter) => {
 			}
 		}
 	}
-	return [l_cx, l_cy];
+
+	const coords = l_cx.map((_, i) => [l_cx[i], l_cy[i]]);
+	return coords;
 };
