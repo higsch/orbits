@@ -18,7 +18,7 @@ export const createDrawDots = (regl) =>
         alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);
       #endif
 
-      gl_FragColor = vec4(fragColor, 1.0) * alpha * fragOpacity;
+      gl_FragColor = vec4(fragColor, fragOpacity);
     }
 `,
 		vert: `
@@ -41,9 +41,18 @@ export const createDrawDots = (regl) =>
 `,
 		attributes: {
 			coord: (_, props) => props.coordinates,
-			opacity: (_, props) => props.opacities || Array.from({length: props.coordinates.length}, () => 0.1),
-			radius: (_, props) => props.radii || Array.from({length: props.coordinates.length}, () => 5.0),
-			color: (_, props) => props.colors || Array.from({length: props.coordinates.length}, () => ([1, 1, 1]))
+			opacity: (_, props) =>
+				props.opacities ||
+				Array.from({ length: props.coordinates.length }, () => 1.0),
+			radius: (ctx, props) =>
+				props.radii?.map((r) => r * ctx.pixelRatio) ||
+				Array.from(
+					{ length: props.coordinates.length },
+					() => 1.0 * ctx.pixelRatio
+				),
+			color: (_, props) =>
+				props.colors ||
+				Array.from({ length: props.coordinates.length }, () => [1, 1, 1]),
 		},
 		blend: {
 			enable: true,
